@@ -1,0 +1,76 @@
+// Designed by the candidate: Section 5 of the assessment PDF was missing.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum AuditStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CLIENT)
+  clientId     String?
+  client       Client?  @relation(fields: [clientId], references: [id])
+  createdAt    DateTime @default(now())
+}
+
+model Client {
+  id           String   @id @default(cuid())
+  name         String
+  url          String
+  businessType String
+  city         String
+  state        String
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  users        User[]
+  audits       Audit[]
+}
+
+model Audit {
+  id              String           @id @default(cuid())
+  clientId        String
+  client          Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  status          AuditStatus      @default(QUEUED)
+  progress        Int              @default(0)
+  currentStep     String?
+  overallScore    Int?
+  resultJson      Json?
+  pdfPath         String?
+  error           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  recommendations Recommendation[]
+
+  @@index([clientId, createdAt])
+}
+
+model Recommendation {
+  id                  String @id @default(cuid())
+  auditId             String
+  audit               Audit  @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  priority            String
+  category            String
+  finding             String
+  fix                 String
+  estimatedImpact     String
+  effort              String
+  falsifiabilityCheck String
+}
