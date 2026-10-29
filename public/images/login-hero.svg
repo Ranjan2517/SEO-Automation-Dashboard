@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Abstract illustration of a rising SEO performance chart">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#04201e"/>
+      <stop offset="0.55" stop-color="#075650"/>
+      <stop offset="1" stop-color="#0f9488"/>
+    </linearGradient>
+    <radialGradient id="glowA" cx="0.8" cy="0.15" r="0.6">
+      <stop offset="0" stop-color="#5eead4" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowB" cx="0.1" cy="0.95" r="0.7">
+      <stop offset="0" stop-color="#99f6e4" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#99f6e4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5eead4" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#5eead4" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#99f6e4" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="1000" height="1200" fill="url(#bg)"/>
+  <rect width="1000" height="1200" fill="url(#grid)"/>
+  <rect width="1000" height="1200" fill="url(#glowA)"/>
+  <rect width="1000" height="1200" fill="url(#glowB)"/>
+
+  <!-- soft rings -->
+  <circle cx="850" cy="180" r="260" fill="none" stroke="#ffffff" stroke-opacity="0.07" stroke-width="2"/>
+  <circle cx="850" cy="180" r="180" fill="none" stroke="#ffffff" stroke-opacity="0.09" stroke-width="2"/>
+  <circle cx="850" cy="180" r="100" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="2"/>
+
+  <!-- background bars -->
+  <g fill="#ffffff" fill-opacity="0.08">
+    <rect x="70"  y="980" width="46" height="170" rx="8"/>
+    <rect x="140" y="930" width="46" height="220" rx="8"/>
+    <rect x="210" y="960" width="46" height="190" rx="8"/>
+    <rect x="280" y="880" width="46" height="270" rx="8"/>
+    <rect x="350" y="900" width="46" height="250" rx="8"/>
+    <rect x="420" y="820" width="46" height="330" rx="8"/>
+    <rect x="490" y="840" width="46" height="310" rx="8"/>
+    <rect x="560" y="760" width="46" height="390" rx="8"/>
+    <rect x="630" y="720" width="46" height="430" rx="8"/>
+    <rect x="700" y="660" width="46" height="490" rx="8"/>
+    <rect x="770" y="620" width="46" height="530" rx="8"/>
+    <rect x="840" y="560" width="46" height="590" rx="8"/>
+  </g>
+
+  <!-- rising performance line -->
+  <path d="M60 1040 C 180 1000, 240 1020, 330 940 S 480 900, 560 820 S 700 760, 780 650 S 880 520, 940 430 L 940 1200 L 60 1200 Z" fill="url(#area)"/>
+  <path d="M60 1040 C 180 1000, 240 1020, 330 940 S 480 900, 560 820 S 700 760, 780 650 S 880 520, 940 430" fill="none" stroke="url(#line)" stroke-width="5" stroke-linecap="round"/>
+  <g fill="#ffffff">
+    <circle cx="330" cy="940" r="9"/>
+    <circle cx="560" cy="820" r="9"/>
+    <circle cx="780" cy="650" r="9"/>
+    <circle cx="940" cy="430" r="13"/>
+  </g>
+  <g fill="none" stroke="#5eead4" stroke-opacity="0.6" stroke-width="3">
+    <circle cx="330" cy="940" r="18"/>
+    <circle cx="560" cy="820" r="18"/>
+    <circle cx="780" cy="650" r="18"/>
+    <circle cx="940" cy="430" r="26"/>
+  </g>
+
+  <!-- score ring -->
+  <g transform="translate(790 300)">
+    <circle r="88" fill="#04201e" fill-opacity="0.35"/>
+    <circle r="70" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="14"/>
+    <circle r="70" fill="none" stroke="#5eead4" stroke-width="14" stroke-linecap="round" stroke-dasharray="361 440" transform="rotate(-90)"/>
+    <text text-anchor="middle" y="14" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#ffffff">82</text>
+  </g>
+
+  <!-- scattered sparkles -->
+  <g fill="#ffffff" fill-opacity="0.5">
+    <circle cx="120" cy="560" r="3"/><circle cx="220" cy="640" r="2"/><circle cx="90" cy="740" r="2.5"/>
+    <circle cx="410" cy="540" r="2"/><circle cx="520" cy="620" r="3"/><circle cx="640" cy="500" r="2"/>
+    <circle cx="300" cy="460" r="2"/><circle cx="700" cy="420" r="2.5"/>
+  </g>
+</svg>

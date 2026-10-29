@@ -8,6 +8,10 @@ const { getSearchConsole } = require('../crawlers/gsc');
 const { validateSchema } = require('../crawlers/schema');
 const { checkTechnical } = require('../crawlers/technical');
 const { getRankings } = require('../crawlers/dataforseo');
+const { analyseAudit } = require('../ai/claude');
+const { generatePdf } = require('../reports/pdf');
+const { sendWhatsApp, sendEmail } = require('../notifications/whatsapp');
+const { STEP_NAMES, progressAfter } = require('../lib/steps');
 
 // Each step is its own function. `ctx` carries the client and everything collected so far.
 const steps = [
@@ -24,7 +28,38 @@ const steps = [
       ctx.signals.rankings = await getRankings(ctx.client.url, keyword);
     },
   },
+  { name: 'Claude analysis', run: async (ctx) => { ctx.analysis = await analyseAudit(ctx.client, ctx.signals); } },
+  {
+    name: 'Save audit result',
+    run: async (ctx) => {
+      await prisma.audit.update({
+        where: { id: ctx.auditId },
+        data: { overallScore: ctx.analysis.overall_score, resultJson: { analysis: ctx.analysis, signals: ctx.signals } },
+      });
+    },
+  },
+  {
+    name: 'Generate PDF report',
+    run: async (ctx) => {
+      const pdfPath = await generatePdf(ctx.auditId, ctx.client, { analysis: ctx.analysis });
+      await prisma.audit.update({ where: { id: ctx.auditId }, data: { pdfPath } });
+      ctx.pdfPath = pdfPath;
+    },
+  },
+  {
+    name: 'Send WhatsApp + email',
+    run: async (ctx) => {
+      await sendWhatsApp(ctx.client.id, ctx.pdfPath, ctx.analysis.overall_score);
+      await sendEmail(ctx.client.id, ctx.pdfPath, ctx.analysis.overall_score);
+    },
+  },
 ];
+
+const STEP_DELAY_MS = Number(process.env.AUDIT_STEP_DELAY_MS) || 0;
+
+if (steps.length !== STEP_NAMES.length || steps.some((s, i) => s.name !== STEP_NAMES[i])) {
+  throw new Error('worker steps are out of sync with src/lib/steps.js');
+}
 
 async function setProgress(job, auditId, progress, currentStep, status = 'RUNNING') {
   await job.updateProgress(progress);
@@ -35,20 +70,18 @@ async function setProgress(job, auditId, progress, currentStep, status = 'RUNNIN
 async function processAudit(job) {
   const { auditId } = job.data;
   const audit = await prisma.audit.findUniqueOrThrow({ where: { id: auditId }, include: { client: true } });
-  const ctx = { client: audit.client, signals: {} };
+  const ctx = { auditId, client: audit.client, signals: {} };
 
   await setProgress(job, auditId, 0, 'Starting');
   for (let i = 0; i < steps.length; i++) {
     await steps[i].run(ctx);
-    await setProgress(job, auditId, Math.round(((i + 1) / steps.length) * 100), steps[i].name);
+    await setProgress(job, auditId, progressAfter(i), steps[i].name);
+    // Optional pacing so mocked steps (which finish instantly) are watchable in a demo.
+    if (STEP_DELAY_MS) await new Promise((r) => setTimeout(r, STEP_DELAY_MS));
   }
 
-  // Claude analysis, PDF and notification are added in later phases.
-  await prisma.audit.update({
-    where: { id: auditId },
-    data: { status: 'COMPLETED', resultJson: { signals: ctx.signals } },
-  });
-  return ctx.signals;
+  await prisma.audit.update({ where: { id: auditId }, data: { status: 'COMPLETED' } });
+  return { overallScore: ctx.analysis.overall_score };
 }
 
 function startWorker() {
